@@ -1,7 +1,14 @@
-import { Link } from "react-router-dom";
+
 import axios from "axios";
 import { useEffect, useReducer} from "react";
 import logger from "use-reducer-logger";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Product from "../components/Product";
+import { Helmet } from "react-helmet-async";
+import Loading from "../components/Loading";
+import MessageBox from "../components/MessageBox";
+import { getError } from "../utils";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -30,31 +37,30 @@ function HomeScreen() {
           const result = await axios.get("/api/products");
           dispatch({type: "FETCH_SUCCESS", payload: result.data});
         } catch (error) {
-          dispatch({type: "FETCH_FAIL", payload: error.message});
+          dispatch({type: "FETCH_FAIL", payload: getError(error)});
         }
       };
       fetchData();
     },[]);
+    console.log(error)
     return(
         <div>
-            <h1>Featured Products</h1>
+            <Helmet>
+                <title>Featured Products</title>
+            </Helmet>
             <div className="products">
-              {
-                loading ? (<div>loading...</div>) : error ? (<div>{error}</div>) : (
-                  products.map((product) => (
-                    <div className="product" key={product.id}>
-                      <Link to={`/product/${product.slug}`}>
-                        <img src={product.image} alt= {product.name} />
-                        <div className="product-info">
-                          <p>{product.name}</p>
-                          <p>{product.price}</p>
-                        </div>
-                      </Link>
-                    </div>
-                  ))
-                )
-                
-              }
+              <Row>
+                {
+                  loading ? (<Loading />) : error ? (<MessageBox variant="danger">{error}</MessageBox>) : (
+                    products.map((product) => (
+                      <Col sm={6} md={4} lg={3} className="mb-3" key={product.id}>
+                        <Product product={product} />
+                      </Col>
+                    ))
+                  )
+                  
+                }
+              </Row>
             </div>
         </div>
     )
