@@ -42,7 +42,6 @@ function HomeScreen() {
       };
       fetchData();
     },[]);
-    console.log(error)
     return(
         <div>
             <Helmet>

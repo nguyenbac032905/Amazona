@@ -38,3 +38,7 @@ main{
 .img-thumbnail{
   max-height: 80px;
 }
+.small-container{
+  max-width: 400px;
+  margin: 0 auto;
+}
