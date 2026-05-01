@@ -9,7 +9,7 @@ import axios from "axios";
 
 function CartScreen() {
     const {state, dispatch} = useContext(Store);
-    const {cart: {cartItems}} = state;
+    const {userInfo,cart: {cartItems}} = state;
     const navigate = useNavigate();
     const handleUpdateCart = async (item, quantity) => {
         const {data} = await axios.get(`/api/products/${item._id}`);
@@ -23,7 +23,11 @@ function CartScreen() {
         dispatch({type: "REMOVE_CART_ITEM", payload: item});
     }
     const handleCheckout = () => {
-        navigate("signin?redirect=/shipping");
+        if(!userInfo){
+            navigate("/login?redirect=/shipping");
+        } else {
+            navigate("/shipping");
+        }
     }
     return (
         <>

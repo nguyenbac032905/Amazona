@@ -7,7 +7,7 @@ import { Store } from "../Store";
 import { toast, ToastContainer } from "react-toastify";
 import { getError } from "../utils";
 
-function SigninScreen() {
+function SignupScreen() {
     const {search} = useLocation();
     const navigate = useNavigate();
     const {state, dispatch: ctxDispatch} = useContext(Store);
@@ -18,8 +18,15 @@ function SigninScreen() {
         e.preventDefault();
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
+        const name = e.target.elements.name.value;
+        const confirmPassword = e.target.elements.confirmPassword.value;
+        if(password !== confirmPassword){
+            toast.error("Passwords do not match");
+            return;
+        }
         try {
-            const {data} = await axios.post("/api/users/signin",{
+            const {data} = await axios.post("/api/users/signup",{
+                name,
                 email,
                 password
             });
@@ -38,24 +45,32 @@ function SigninScreen() {
     <>
         <Container className="small-container">
             <Helmet>
-                <title>Sign In</title>
+                <title>Sign Up</title>
             </Helmet>
-            <h1 className="my-3">Sign In</h1>
+            <h1 className="my-3">Sign Up</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="email">
                     <Form.Label>Email</Form.Label>
                     <Form.Control type="email" name="email" required />
                 </Form.Group>
+                <Form.Group className="mb-3" controlId="name">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control type="text" name="name" required />
+                </Form.Group>
                 <Form.Group className="mb-3" controlId="password">  
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="password" name="password" required />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="signin">
-                    <Button type="submit">Sign In</Button>
+                <Form.Group className="mb-3" controlId="confirmPassword">
+                    <Form.Label>Confirm Password</Form.Label>
+                    <Form.Control type="password" name="confirmPassword" required />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="signup">
+                    <Button type="submit">Sign Up</Button>
                 </Form.Group>
                 <div className="mb-3">
-                    New customer?{' '}
-                    <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
+                    Already have an account?{' '}
+                    <Link to={`/signin?redirect=${redirect}`}>Sign In</Link>
                 </div>
             </Form>
              <ToastContainer />
@@ -63,4 +78,4 @@ function SigninScreen() {
     </>
     )
 }
-export default SigninScreen;
+export default SignupScreen;

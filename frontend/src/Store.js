@@ -3,7 +3,9 @@ import { createContext, useReducer } from "react";
 export const Store = createContext();
 
 const initialState = {
+    userInfo: localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null,
     cart: {
+        shippingAddress: localStorage.getItem("shippingAddress") ? JSON.parse(localStorage.getItem("shippingAddress")) : {},
         cartItems: localStorage.getItem("cartItems") ? JSON.parse(localStorage.getItem("cartItems")) : []
     }
 }
@@ -22,6 +24,18 @@ const reducer = (state, action) => {
             const cartItemsRemoved = state.cart.cartItems.filter(item => item._id != action.payload._id);
             localStorage.setItem("cartItems", JSON.stringify(cartItemsRemoved));
             return {...state, cart: {...state.cart, cartItems: cartItemsRemoved}}
+        case "USER_SIGNIN":
+            localStorage.setItem("userInfo", JSON.stringify(action.payload));
+            localStorage.removeItem("userInfo");
+            return {...state, userInfo: action.payload}
+        case "USER_SIGNOUT":
+            localStorage.removeItem("userInfo");
+            localStorage.removeItem("cartItems");
+            localStorage.removeItem("shippingAddress");
+            return {...state, userInfo: null, cart: {cartItems: [], shippingAddress: {}}}
+        case "SAVE_SHIPPING_ADDRESS":
+            localStorage.setItem("shippingAddress", JSON.stringify(action.payload));
+            return {...state, cart: {...state.cart, shippingAddress: action.payload}}
         default:
             return state;
     }

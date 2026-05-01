@@ -28,4 +28,26 @@ userRouter.post(
     });
   })
 );
+userRouter.post(
+  "/signup", 
+  expressAsyncHandler(async (req,res) => {
+    const existUser = await User.findOne({email: req.body.email});
+    if(existUser){
+        return res.status(400).send({message: "Email already exists"});
+    }
+    const user = new User({
+      email: req.body.email,
+      name: req.body.name,
+      password: bcrypt.hashSync(req.body.password, 8)
+    });
+    const createdUser = await user.save();
+
+    res.send({
+      _id: createdUser._id,
+      name: createdUser.name,
+      email: createdUser.email,
+      isAdmin: createdUser.isAdmin,
+      token: generateToken(createdUser)
+    })
+}))
 export default userRouter;
